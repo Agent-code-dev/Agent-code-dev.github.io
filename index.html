@@ -1,30 +1,1010 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent-Code</title>
-    
-    <!-- Your custom SVG icon with the encoded color -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='10' fill='%2358a6ff'/></svg>">
-    
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #1e1e1e;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
+<meta charset="utf-8">
+<title>Agent + Skill Store — pip install agent-code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Local AI agent with headless browser, sandboxed shell, plug-and-play skills, and trusted Python add-ons. Install with pip install agent-code.">
+<meta name="keywords" content="ai agent, local llm, python, openai, headless browser, drissionpage, claude code alternative, ai agent framework, sandboxed shell, plugin skills, ai addons, python extensions, customtkinter addons, agent add-ons">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://agent-code-dev.github.io/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='10' fill='%2358a6ff'/%3E%3C/svg%3E">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://agent-code-dev.github.io/">
+<meta property="og:title" content="Agent + Skill Store">
+<meta property="og:description" content="Local AI agent with headless browser, sandboxed shell, plug-and-play skills, and trusted Python add-ons.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Agent + Skill Store",
+  "alternateName": "agent-code",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Windows, Linux, macOS",
+  "description": "Local AI agent with headless browser, sandboxed shell, plug-and-play skills, and trusted Python add-ons.",
+  "url": "https://agent-code-dev.github.io/",
+  "downloadUrl": "https://pypi.org/project/agent-code/",
+  "softwareVersion": "2.0.0",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "author": {"@type": "Organization", "name": "Agent-code-dev", "url": "https://github.com/Agent-code-dev"}
+}
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+<!-- Markdown Parser for Changelog -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+  :root {
+    --bg:#0e1117; --panel:#161b22; --card:#1c2128; --hover:#21262d;
+    --border:#30363d; --fg:#c9d1d9; --dim:#8b949e;
+    --accent:#58a6ff; --green:#3fb950; --yellow:#d29922; --red:#f85149; --purple:#bc8cff;
+    --mono:"Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  code { font:13px/1.5 var(--mono); background:var(--card); padding:2px 6px; border-radius:4px; }
+  pre { background:#0d1117; border:1px solid var(--border); border-radius:8px;
+        padding:16px 18px; overflow-x:auto; font:13px/1.6 var(--mono); margin:0; }
+  pre code { background:transparent; padding:0; }
+  .container { max-width:1080px; margin:0 auto; padding:0 24px; }
+
+  nav { position:sticky; top:0; z-index:100;
+    background:rgba(14,17,23,.92); backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border); }
+  nav .container { display:flex; align-items:center; padding-top:14px; padding-bottom:14px; }
+  .logo { font-weight:700; font-size:16px; color:#fff; display:flex; align-items:center; gap:8px; cursor:pointer; }
+  .logo .dot { width:10px; height:10px; border-radius:50%; background:var(--accent);
+    animation:pulse 2.6s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { box-shadow:0 0 10px var(--accent); transform:scale(1); }
+    50%     { box-shadow:0 0 22px var(--accent), 0 0 36px var(--accent); transform:scale(1.15); }
+  }
+  nav ul { list-style:none; margin:0 0 0 auto; padding:0; display:flex;
+    gap:4px; align-items:center; flex-wrap:wrap; }
+  nav ul button { background:none; border:none; color:var(--dim);
+    font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    padding:8px 12px; border-radius:6px; cursor:pointer;
+    transition:color .15s, background .15s; }
+  nav ul button:hover { color:var(--fg); background:var(--card); }
+  nav ul button.active { color:var(--fg); background:var(--card); }
+  nav ul a { color:var(--dim); font-size:14px; padding:8px 12px;
+    border-radius:6px; transition:color .15s, background .15s; }
+  nav ul a:hover { color:var(--fg); background:var(--card); text-decoration:none; }
+  @media (max-width:960px) { nav ul button, nav ul a { padding:8px 8px; font-size:13px; } }
+  @media (max-width:720px) { nav ul button, nav ul a { padding:6px 5px; font-size:12px; } }
+
+  .page { display:none; }
+  .page.active { display:block; animation:pageFade .35s ease; }
+  @keyframes pageFade {
+    from { opacity:0; transform:translateY(8px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .hero { padding:80px 0 48px; text-align:center; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse 800px 400px at 50% 0%, rgba(88,166,255,.12), transparent 70%);
+    pointer-events:none; animation:heroGlow 8s ease-in-out infinite; }
+  @keyframes heroGlow { 0%,100% { opacity:.85; } 50% { opacity:1; } }
+  .hero h1 { font-size:48px; line-height:1.1; margin:0 0 16px; color:#fff;
+    letter-spacing:-.02em; position:relative; }
+  .hero h1 .grad {
+    background:linear-gradient(135deg,#58a6ff 0%,#bc8cff 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text; background-size:200% 200%;
+    animation:gradShift 6s ease-in-out infinite; }
+  @keyframes gradShift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+  .hero p.tag { font-size:17px; color:var(--dim); max-width:660px;
+    margin:0 auto 24px; position:relative; }
+
+  .version-pill {
+    display:inline-flex; align-items:center; gap:10px;
+    background:rgba(63,185,80,.12); border:1px solid #1a7f37;
+    border-radius:999px; padding:6px 14px; margin-bottom:20px;
+    font-size:13px; color:var(--green); position:relative;
+    animation:pillIn .5s ease-out; }
+  @keyframes pillIn {
+    from { opacity:0; transform:scale(.9); }
+    to   { opacity:1; transform:scale(1); }
+  }
+  .version-pill .live-dot {
+    width:6px; height:6px; border-radius:50%; background:var(--green);
+    box-shadow:0 0 8px var(--green); animation:livePulse 2s ease-in-out infinite; }
+  @keyframes livePulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+  .version-pill a { color:var(--green); text-decoration:underline; }
+
+  .update-banner {
+    display:none; align-items:center; gap:12px;
+    background:rgba(88,166,255,.12); border:1px solid var(--accent);
+    border-radius:10px; padding:12px 18px; margin:0 auto 24px;
+    max-width:600px; font-size:14px; color:var(--fg); }
+  .update-banner.show { display:flex; }
+  .update-banner button {
+    background:var(--accent); color:#fff; border:0;
+    border-radius:6px; padding:6px 12px; cursor:pointer;
+    font-weight:600; font-size:13px; }
+
+  .hero .pip-line {
+    display:inline-block; background:#0d1117; border:1px solid var(--border);
+    border-radius:10px; padding:14px 22px; margin:8px 0 24px;
+    font:15px/1.4 var(--mono); color:#fff; position:relative; }
+  .hero .pip-line .prompt { color:var(--dim); margin-right:8px; }
+  .hero .pip-line .cmd { color:var(--green); }
+  .hero .pip-line button {
+    background:none; border:1px solid var(--border); color:var(--dim);
+    margin-left:12px; padding:3px 10px; border-radius:6px;
+    font:12px var(--mono); cursor:pointer; transition:all .15s; }
+  .hero .pip-line button:hover { background:var(--card); color:var(--fg); }
+
+  .badges { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+  .badge { display:inline-flex; align-items:center; gap:6px;
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:999px; padding:5px 12px; font-size:12px; color:var(--dim);
+    transition:border-color .15s, transform .15s; }
+  .badge:hover { border-color:var(--accent); transform:translateY(-2px); }
+  .badge strong { color:var(--fg); font-weight:600; }
+
+  .actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; position:relative; }
+  .btn { display:inline-flex; align-items:center; gap:8px;
+    padding:12px 22px; border-radius:8px;
+    font-weight:600; font-size:14px; border:1px solid transparent;
+    cursor:pointer; transition:all .18s; text-decoration:none; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { background:#79b8ff; text-decoration:none;
+    transform:translateY(-2px); box-shadow:0 8px 24px rgba(88,166,255,.4); }
+  .btn-secondary { background:var(--card); color:var(--fg); border-color:var(--border); }
+  .btn-secondary:hover { background:var(--hover); text-decoration:none;
+    border-color:#444c56; transform:translateY(-2px); }
+  .btn-green { background:var(--green); color:#fff; }
+  .btn-green:hover { background:#56d364; text-decoration:none;
+    transform:translateY(-2px); box-shadow:0 8px 24px rgba(63,185,80,.4); }
+
+  section { padding:56px 0; }
+  section h2 { font-size:28px; margin:0 0 8px; color:#fff; letter-spacing:-.01em; }
+  section h3 { font-size:16px; margin:32px 0 12px; color:var(--accent); }
+  section .sub { color:var(--dim); font-size:15px; margin-bottom:36px; }
+  hr.divider { border:0; height:1px; background:var(--border); margin:0; }
+
+  .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+  .feature { background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; padding:22px 24px;
+    transition:border-color .18s, transform .18s, box-shadow .18s; }
+  .feature:hover { border-color:#444c56; transform:translateY(-4px);
+    box-shadow:0 12px 32px rgba(0,0,0,.35); }
+  .feature .icon { width:36px; height:36px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(88,166,255,.12); margin-bottom:14px; font-size:18px;
+    transition:transform .2s, background .2s; }
+  .feature:hover .icon { background:rgba(88,166,255,.22); transform:scale(1.1) rotate(-4deg); }
+  .feature h3 { font-size:15px; margin:0 0 6px; color:#fff; }
+  .feature p { font-size:13.5px; color:var(--dim); margin:0; line-height:1.55; }
+
+  .steps { display:grid; gap:12px; }
+  .step { display:flex; gap:16px; padding:18px 20px;
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; transition:border-color .18s, transform .18s; }
+  .step:hover { border-color:#444c56; transform:translateY(-2px); }
+  .step .num { width:28px; height:28px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(88,166,255,.15); color:var(--accent);
+    font-weight:700; font-size:13px; flex-shrink:0; }
+  .step .body { flex:1; min-width:0; }
+  .step h3 { font-size:14px; margin:4px 0 8px; color:#fff; }
+  .step p { font-size:13.5px; color:var(--dim); margin:8px 0 0; }
+
+  .cmd-table { width:100%; border-collapse:collapse; background:var(--panel);
+    border:1px solid var(--border); border-radius:10px; overflow:hidden; font-size:14px; }
+  .cmd-table th, .cmd-table td { text-align:left; padding:12px 18px;
+    border-bottom:1px solid var(--border); vertical-align:top; }
+  .cmd-table tr:last-child td { border-bottom:0; }
+  .cmd-table th { background:var(--card); color:var(--dim); font-weight:600; font-size:13px; }
+  .cmd-table tbody tr { transition:background .15s; }
+  .cmd-table tbody tr:hover { background:var(--card); }
+  .cmd-table code { background:transparent; padding:0; color:var(--accent); }
+  .cmd-table code.cmd { color:var(--green); }
+  .cmd-table td.platform { color:var(--fg); font-weight:600; }
+
+  details { background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; padding:0; margin-bottom:10px; overflow:hidden;
+    transition:border-color .15s; }
+  details:hover { border-color:#444c56; }
+  details summary { padding:16px 20px; cursor:pointer; font-weight:600;
+    font-size:14px; color:#fff; list-style:none; display:flex; align-items:center; gap:10px; }
+  details summary::-webkit-details-marker { display:none; }
+  details summary::before { content:'+'; color:var(--accent); font-size:18px;
+    font-weight:400; width:16px; display:inline-block; }
+  details[open] summary::before { content:'−'; }
+  details summary:hover { background:var(--card); }
+  details .body { padding:0 20px 18px 46px; color:var(--dim); font-size:14px; line-height:1.65; }
+  details .body p { margin:0 0 10px; }
+  details .body p:last-child { margin-bottom:0; }
+  details .body pre { margin-top:10px; }
+
+  .dl-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+  .dl-card { background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; padding:24px; display:flex; flex-direction:column; gap:12px;
+    transition:border-color .18s, transform .18s, box-shadow .18s; }
+  .dl-card:hover { border-color:#444c56; transform:translateY(-3px);
+    box-shadow:0 12px 32px rgba(0,0,0,.35); }
+  .dl-card h3 { margin:0; font-size:16px; color:#fff; }
+  .dl-card p { margin:0; font-size:13.5px; color:var(--dim); }
+  .dl-card .meta { margin-top:auto; padding-top:12px; border-top:1px solid var(--border);
+    font-size:12px; color:var(--dim); display:flex; justify-content:space-between; }
+  .dl-card .pill { background:var(--card); border:1px solid var(--border);
+    border-radius:999px; padding:3px 10px; font-size:11px; color:var(--green); }
+
+  .install-card { background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; overflow:hidden; }
+  .install-head { display:flex; align-items:center; padding:12px 18px;
+    border-bottom:1px solid var(--border); background:var(--card);
+    font-size:13px; color:var(--dim); }
+  .install-head .pills { margin-left:auto; display:flex; gap:6px; }
+  .pill { display:inline-block; background:var(--card); border:1px solid var(--border);
+    border-radius:999px; padding:2px 10px; font-size:11px; color:var(--dim); margin-right:6px; }
+  .pill.green { color:var(--green); border-color:#1a7f37; }
+  .install-card pre { border:0; border-radius:0; }
+
+  .callout { border-left:3px solid var(--accent); background:var(--panel);
+    padding:12px 16px; margin:12px 0; border-radius:0 6px 6px 0; font-size:14px; }
+  .callout.warn { border-left-color:var(--yellow); }
+  .callout.ok { border-left-color:var(--green); }
+
+  .guide-wrap { display:grid; grid-template-columns:220px 1fr; gap:24px;
+    max-width:1080px; margin:0 auto; padding:0 24px; }
+  @media (max-width:900px) { .guide-wrap { grid-template-columns:1fr; } }
+  .guide-toc { position:sticky; top:80px; align-self:start;
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; padding:16px 14px;
+    max-height:calc(100vh - 100px); overflow-y:auto; }
+  .guide-toc h3 { font-size:12px; color:var(--dim); text-transform:uppercase;
+    letter-spacing:.05em; margin:0 0 10px; }
+  .guide-toc a { display:block; color:var(--fg); padding:5px 8px; border-radius:4px;
+    font-size:12.5px; margin:1px 0; }
+  .guide-toc a:hover { background:var(--card); text-decoration:none; color:var(--accent); }
+  .guide-main h2 { font-size:24px; margin:40px 0 12px; padding-top:20px;
+    border-top:1px solid var(--border); color:#fff; scroll-margin-top:80px; }
+  .guide-main h2:first-of-type { border-top:0; margin-top:0; padding-top:0; }
+  .guide-main h3 { font-size:17px; margin:28px 0 10px; color:var(--accent); scroll-margin-top:80px; }
+  .guide-main p { margin:10px 0; }
+  .guide-main pre { margin:14px 0; }
+
+  /* Changelog markdown */
+  .changelog-md { background:var(--panel); border:1px solid var(--border);
+    border-radius:10px; padding:28px 32px; font-size:14.5px; line-height:1.7; }
+  .changelog-md h1 { font-size:26px; margin:0 0 20px; padding-bottom:14px;
+    border-bottom:1px solid var(--border); color:#fff; letter-spacing:-.01em; }
+  .changelog-md h1:not(:first-of-type) { margin-top:48px; padding-top:28px;
+    border-top:1px solid var(--border); }
+  .changelog-md h2 { font-size:20px; margin:32px 0 10px; color:#fff; padding:0; border:0; }
+  .changelog-md h2:first-of-type { margin-top:0; }
+  .changelog-md h3 { font-size:16px; margin:24px 0 8px; color:var(--accent); }
+  .changelog-md h4 { font-size:14px; margin:18px 0 6px; color:var(--fg); font-weight:600; }
+  .changelog-md p { margin:10px 0; color:var(--fg); }
+  .changelog-md ul, .changelog-md ol { padding-left:22px; margin:10px 0; color:var(--dim); }
+  .changelog-md li { margin:4px 0; }
+  .changelog-md code { background:var(--card); padding:2px 6px; border-radius:4px;
+    font:13px/1.5 var(--mono); color:var(--accent); }
+  .changelog-md pre { background:#0d1117; border:1px solid var(--border);
+    border-radius:8px; padding:14px 16px; overflow-x:auto; margin:14px 0; }
+  .changelog-md pre code { background:transparent; padding:0; color:var(--fg); font-size:13px; }
+  .changelog-md a { color:var(--accent); }
+  .changelog-md hr { border:0; height:1px; background:var(--border); margin:24px 0; }
+  .changelog-md blockquote { border-left:3px solid var(--accent); padding:4px 14px;
+    margin:12px 0; color:var(--dim); font-style:italic; }
+  .changelog-md strong { color:#fff; font-weight:600; }
+
+  #toTop { position:fixed; right:24px; bottom:24px; width:44px; height:44px;
+    border-radius:50%; background:var(--accent); color:#fff; border:none;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 20px rgba(88,166,255,.4);
+    opacity:0; transform:translateY(20px) scale(.85); pointer-events:none;
+    transition:opacity .28s ease, transform .28s ease, background .15s; z-index:90; }
+  #toTop.show { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  #toTop:hover { background:#79b8ff; transform:translateY(-3px) scale(1.08); }
+
+  footer { border-top:1px solid var(--border); padding:32px 0;
+    color:var(--dim); font-size:13px; }
+  footer .container { display:flex; flex-wrap:wrap; gap:16px; align-items:center; }
+  footer .links { display:flex; gap:16px; margin-left:auto; flex-wrap:wrap; }
+</style>
 </head>
 <body>
-    <iframe src="https://agent-code.page.gd" title="Agent-Code Site"></iframe>
+
+<nav>
+  <div class="container">
+    <div class="logo" onclick="go('home')">
+      <span class="dot"></span> Agent + Skill Store
+    </div>
+    <ul>
+      <li><button data-page="home" class="active">Home</button></li>
+      <li><button data-page="download">Download</button></li>
+      <li><button data-page="skills">Skills</button></li>
+      <li><button data-page="addons">Add-ons</button></li>
+      <li><button data-page="help">Help</button></li>
+      <li><button data-page="guide">Guide</button></li>
+      <li><button data-page="changelog">Changelog</button></li>
+      <li><a href="https://pypi.org/project/agent-code/" target="_blank" rel="noopener">PyPI ↗</a></li>
+      <li><a href="https://github.com/Agent-code-dev/Agent-code" target="_blank" rel="noopener">GitHub ↗</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <header class="hero">
+    <div class="container">
+      <div class="version-pill" data-aos="zoom-in" title="Live from PyPI + GitHub">
+        <span class="live-dot"></span>
+        <strong id="version-text">v2.0.0</strong>
+        <span style="opacity:.5">·</span>
+        <span id="date-text">Recently</span>
+        <span style="opacity:.5">·</span>
+        <a href="https://github.com/Agent-code-dev/Agent-code/releases" id="release-link" target="_blank" rel="noopener">what's new →</a>
+      </div>
+
+      <h1 data-aos="fade-up" data-aos-duration="700">
+        Your own <span class="grad">AI agent</span>, on your machine.
+      </h1>
+      <p class="tag" data-aos="fade-up" data-aos-delay="100">
+        Headless browser. Sandboxed shell. Plug-and-play skills.
+        Trusted Python add-ons. Free, open source, works with any
+        OpenAI-compatible endpoint.
+      </p>
+
+      <div class="update-banner" id="updateBanner">
+        <span style="font-size:18px">🎉</span>
+        <span style="flex:1">A new version <strong id="updateVersion"></strong> is available.</span>
+        <button onclick="document.getElementById('updateBanner').classList.remove('show'); window.location.href='?download=1'">Download</button>
+      </div>
+
+      <div class="pip-line" data-aos="zoom-in" data-aos-delay="200">
+        <span class="prompt">$</span>
+        <span class="cmd">pip install agent-code</span>
+        <button onclick="copyPip(this)">Copy</button>
+      </div>
+
+      <div class="badges" data-aos="fade-up" data-aos-delay="300">
+        <span class="badge"><strong>Python</strong> 3.10+</span>
+        <span class="badge"><strong>License</strong> MIT + GPL-3.0</span>
+        <span class="badge"><strong>Platform</strong> Windows · Linux · macOS</span>
+      </div>
+
+      <div class="actions" data-aos="fade-up" data-aos-delay="400">
+        <a class="btn btn-green" href="?download=1">⬇ Download <span class="version-target"></span></a>
+        <a class="btn btn-primary" href="https://pypi.org/project/agent-code/" target="_blank" rel="noopener">View on PyPI</a>
+        <button class="btn btn-secondary" onclick="go('download')">All install methods</button>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="container">
+      <h2 data-aos="fade-right">What's inside</h2>
+      <p class="sub" data-aos="fade-right" data-aos-delay="80">A focused tool that does a few things well.</p>
+      <div class="features">
+        <div class="feature" data-aos="fade-up"><div class="icon">🌐</div><h3>Headless browser</h3><p>Real Chromium via DrissionPage. Renders JS, follows redirects, sees the actual page.</p></div>
+        <div class="feature" data-aos="fade-up" data-aos-delay="80"><div class="icon">🛡️</div><h3>Sandboxed shell</h3><p>Allowlisted commands only. CWD locked to <code>workspace/</code>.</p></div>
+        <div class="feature" data-aos="fade-up" data-aos-delay="160"><div class="icon">📝</div><h3>Markdown rendering</h3><p>Agent answers render with headers, bold, lists, links, code blocks.</p></div>
+        <div class="feature" data-aos="fade-up" data-aos-delay="240"><div class="icon">🧠</div><h3>Claude Code workflow</h3><p>Plans with todos. Reads before editing. Prefers <code>edit_file</code>.</p></div>
+        <div class="feature" data-aos="fade-up"><div class="icon">🕵️</div><h3>Subagents</h3><p>Isolated research tasks with a fresh context. Only the final answer returns.</p></div>
+        <div class="feature" data-aos="fade-up" data-aos-delay="80"><div class="icon">🔒</div><h3>Permission modes</h3><p><code>readonly</code>, <code>ask</code>, or <code>auto</code>. You decide.</p></div>
+        <div class="feature" data-aos="fade-up" data-aos-delay="160"><div class="icon">🧩</div><h3>Plug-and-play skills</h3><p>Drop a folder in <code>skills/</code>. Restart. Tools appear.</p></div>
+        <div class="feature" data-aos="fade-up" data-aos-delay="240"><div class="icon">🔧</div><h3>Trusted add-ons</h3><p>Python extensions that add UI, services, tools, and lifecycle hooks. See the <a href="#" onclick="go('addons');return false;" style="color:var(--accent)">Add-ons</a> page.</p></div>
+        <div class="feature" data-aos="fade-up" data-aos-delay="320"><div class="icon">🔑</div><h3>Any OpenAI-compatible API</h3><p>OpenAI, Together, Groq, DeepSeek, local vLLM. Keys rotate.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0;">
+    <div class="container">
+      <h2 data-aos="fade-right">Quick start</h2>
+      <p class="sub" data-aos="fade-right" data-aos-delay="80">Three commands. No build step.</p>
+      <div class="steps">
+        <div class="step" data-aos="fade-left"><div class="num">1</div><div class="body"><h3>Install the package</h3><pre><code>pip install agent-code</code></pre></div></div>
+        <div class="step" data-aos="fade-left" data-aos-delay="100"><div class="num">2</div><div class="body"><h3>Run the agent</h3><pre><code>agent-code</code></pre><p>On first launch, paste your API key in Settings.</p></div></div>
+        <div class="step" data-aos="fade-left" data-aos-delay="200"><div class="num">3</div><div class="body"><h3>Install bundled skills</h3><pre><code>agent-code skills install</code></pre><p>Copies three skills into <code>./skills/</code>.</p></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- DOWNLOAD -->
+<div class="page" id="page-download">
+  <section style="padding-top:56px;">
+    <div class="container">
+      <h2 data-aos="fade-right">Download <span class="version-target"></span></h2>
+      <p class="sub" data-aos="fade-right" data-aos-delay="80">
+        Latest release: <span class="version-target"></span>, published <span class="date-target"></span>.
+      </p>
+
+      <div class="dl-grid" style="margin-bottom:32px;">
+        <div class="dl-card" data-aos="fade-up">
+          <h3>⬇ Source (ZIP)</h3>
+          <p>Snapshot of the latest release. Extract and run.</p>
+          <a class="btn btn-green" style="align-self:flex-start;" href="?download=1">Download .zip</a>
+          <div class="meta"><span class="pill green">latest</span><span class="version-target"></span></div>
+        </div>
+        <div class="dl-card" data-aos="fade-up" data-aos-delay="80">
+          <h3>⬇ Source (TAR.GZ)</h3>
+          <p>Same content, gzipped tarball.</p>
+          <a class="btn btn-secondary" style="align-self:flex-start;" href="?download=tar">Download .tar.gz</a>
+          <div class="meta"><span>~50 KB</span><span class="version-target"></span></div>
+        </div>
+        <div class="dl-card" data-aos="fade-up" data-aos-delay="160">
+          <h3>🎯 Release notes</h3>
+          <p>See what changed on GitHub.</p>
+          <a class="btn btn-secondary" style="align-self:flex-start;" href="https://github.com/Agent-code-dev/Agent-code/releases" target="_blank" rel="noopener">Open release →</a>
+          <div class="meta"><span>GitHub</span><span class="date-target"></span></div>
+        </div>
+      </div>
+
+      <div class="install-card" data-aos="zoom-in">
+        <div class="install-head"><span>Recommended</span><span class="pills"><span class="pill green">PyPI</span></span></div>
+        <pre><code>pip install --upgrade agent-code</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <div class="container">
+      <h2 data-aos="fade-right">Platform notes</h2>
+      <table class="cmd-table" data-aos="fade-up">
+        <thead><tr><th style="width:260px;">Platform</th><th>Extra setup</th></tr></thead>
+        <tbody>
+          <tr><td class="platform">Windows 10/11</td><td><code>pip install agent-code</code>. If <code>browser: FAILED</code>, install <a href="https://developer.microsoft.com/microsoft-edge/webview2/" target="_blank" rel="noopener">WebView2 Runtime</a>.</td></tr>
+          <tr><td class="platform">macOS 12+</td><td><code>pip install agent-code</code> — done.</td></tr>
+          <tr><td class="platform">Ubuntu / Debian / Kali / Mint</td><td><code>sudo apt install python3-tk chromium</code></td></tr>
+          <tr><td class="platform">Fedora / RHEL / CentOS</td><td><code>sudo dnf install python3-tkinter chromium</code></td></tr>
+          <tr><td class="platform">Arch / Manjaro</td><td><code>sudo pacman -S tk chromium</code></td></tr>
+          <tr><td class="platform">Headless / Cloud Shell / WSL</td><td>CLI works. GUI needs a display.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- SKILLS -->
+<div class="page" id="page-skills">
+  <section style="padding-top:56px;">
+    <div class="container">
+      <h2 data-aos="fade-right">Skills</h2>
+      <p class="sub" data-aos="fade-right" data-aos-delay="80">A skill is a folder. That's the whole system.</p>
+
+      <div class="callout ok" data-aos="fade-up">
+        <strong>Skills vs add-ons:</strong> skills are drop-in <code>skill.py</code> folders that add tools and chat commands. Add-ons are trusted Python extensions that can also add UI, replace services, and hook lifecycle events. Need more than tools? See the <a href="#" onclick="go('addons');return false;">Add-ons</a> page.
+      </div>
+
+      <h3 data-aos="fade-up">Bundled skills</h3>
+      <div class="features" style="margin-bottom:32px;">
+        <div class="feature" data-aos="fade-up"><div class="icon">📁</div><h3>filesystem</h3><p>Read, write, append, and list files inside the sandbox workspace.</p></div>
+        <div class="feature" data-aos="fade-up" data-aos-delay="100"><div class="icon">🔍</div><h3>public_api</h3><p>Search 700+ free public APIs and call them directly.</p></div>
+        <div class="feature" data-aos="fade-up" data-aos-delay="200"><div class="icon">✉️</div><h3>temp_mail</h3><p>Temp inbox via mail.tm / Guerrilla. Send via Resend, Brevo, or Mailjet.</p></div>
+      </div>
+
+      <h3 data-aos="fade-up">Install, manage, publish</h3>
+      <pre data-aos="fade-up"><code># Copy the three bundled skills into ./skills/
+agent-code skills install
+
+# List bundled skill names
+agent-code skills list
+
+# Open the Skill Store GUI (browse, install, disable, publish)
+agent-code manage</code></pre>
+
+      <h3 data-aos="fade-up">Disabling a skill</h3>
+      <p data-aos="fade-up">Toggle it off in <code>agent-code manage</code> → <strong>Skills</strong> tab. Disabled skills are not imported on the next launch; their folder stays put so you can re-enable.</p>
+
+      <div style="margin-top:32px;text-align:center;" data-aos="fade-up">
+        <button class="btn btn-primary" onclick="go('guide')">Write your own skill →</button>
+        <button class="btn btn-secondary" onclick="go('addons')">Need more than tools? Add-ons →</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ADD-ONS -->
+<div class="page" id="page-addons">
+  <section style="padding-top:56px;">
+    <div class="container">
+      <h2 data-aos="fade-right">Add-ons</h2>
+      <p class="sub" data-aos="fade-right" data-aos-delay="80">
+        Trusted Python extensions stored in <code>&lt;user-data&gt;/addons/&lt;id&gt;/</code>. Each add-on ships <code>addon.json</code> and <code>addon.py</code>; helper modules may live beside them.
+      </p>
+
+      <div class="callout warn" data-aos="fade-up">
+        <strong>Add-ons run with your OS permissions.</strong> They are not sandboxed. Install only code you trust.
+        A future signed repository with hashes, compatibility metadata, permission declarations, and review is planned.
+      </div>
+
+      <h3 data-aos="fade-up">Skills vs Add-ons</h3>
+      <table class="cmd-table" data-aos="fade-up" data-aos-delay="80">
+        <thead><tr><th style="width:180px;"></th><th>Skill</th><th>Add-on</th></tr></thead>
+        <tbody>
+          <tr><td class="platform">What it is</td><td><code>skill.py</code> + <code>skill.md</code></td><td><code>addon.py</code> + <code>addon.json</code></td></tr>
+          <tr><td class="platform">Where it lives</td><td><code>./skills/&lt;name&gt;/</code></td><td><code>&lt;user-data&gt;/addons/&lt;id&gt;/</code></td></tr>
+          <tr><td class="platform">Adds agent tools</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td class="platform">Adds slash commands</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td class="platform">Adds UI widgets</td><td>No</td><td>Yes — sidebar, toolbar, settings, workspace, addons</td></tr>
+          <tr><td class="platform">Replaces named services</td><td>No</td><td>Yes — explicit extension points only</td></tr>
+          <tr><td class="platform">Lifecycle hooks</td><td>No</td><td>Yes — e.g. <code>tools_loaded</code></td></tr>
+          <tr><td class="platform">Sandboxed</td><td>Tools run in workspace sandbox</td><td><strong style="color:var(--yellow)">No</strong> — full OS permissions</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-aos="fade-up">Directory layout</h3>
+      <pre data-aos="fade-up"><code>&lt;user-data&gt;/
+└── addons/
+    └── my-extension/
+        ├── addon.json       ← metadata
+        ├── addon.py         ← entry point (defines register(api))
+        └── helpers.py       ← optional helpers</code></pre>
+
+      <h3 data-aos="fade-up">addon.json</h3>
+      <pre data-aos="fade-up"><code>{
+  "name": "my-extension",
+  "version": "1.0.0",
+  "description": "Adds a custom workspace and alternate Skill Store client",
+  "author": "Developer"
+}</code></pre>
+
+      <h3 data-aos="fade-up">addon.py — skeleton</h3>
+      <pre data-aos="fade-up"><code>class AlternateSkillStore:
+    base_url = "https://my-store.example/api"
+
+    def list_skills(self):
+        ...
+
+
+def build_sidebar_button(parent, app):
+    import customtkinter as ctk
+    return ctk.CTkButton(parent, text="My workspace",
+                         command=lambda: app.log_line("Workspace opened", "dim"))
+
+
+def register(api):
+    # Build arbitrary CustomTkinter widgets in supported application regions.
+    api.register_ui("my-workspace", build_sidebar_button,
+                    location="sidebar", label="My workspace")
+
+    # Replace a named service when the relevant core integration opts in.
+    api.register_service("skill_store", AlternateSkillStore(),
+                         replaces=True, priority=50)
+
+    # Add custom agent tools, slash commands, actions and lifecycle hooks too.
+    api.on("tools_loaded", lambda **ctx: None)</code></pre>
+
+      <h3 data-aos="fade-up">UI extension points</h3>
+      <p data-aos="fade-up">
+        <code>register_ui(name, builder, location=..., label=..., description=...)</code>
+        supports <code>sidebar</code>, <code>addons</code>, <code>settings</code>, <code>toolbar</code>, and <code>workspace</code>.
+        The builder receives <code>(parent, app)</code> and should return a Tk / CustomTkinter widget. The host places the returned widget.
+        Keep builders fast — do not block the UI thread.
+      </p>
+
+      <h3 data-aos="fade-up">Service extensions</h3>
+      <p data-aos="fade-up">
+        <code>register_service(name, implementation, replaces=False, priority=0, description="")</code>
+        registers a named service implementation.
+        <code>AddonManager.resolve_service(name, default, app=...)</code> returns the highest-priority registered implementation, or the supplied default.
+        Factories can set <code>addon_service_factory = True</code> and accept <code>app</code>.
+      </p>
+      <div class="callout" data-aos="fade-up">
+        Service names are <strong>explicit extension points</strong>, not arbitrary monkey-patching of core globals.
+        Core integrations must call <code>resolve_service</code> for a service before an add-on can replace it.
+        Existing services remain the default when no add-on replacement is registered.
+      </div>
+
+      <h3 data-aos="fade-up">Lifecycle hooks</h3>
+      <p data-aos="fade-up">
+        <code>api.on("tools_loaded", callback)</code> — subscribe to events. Callbacks receive keyword context.
+      </p>
+
+      <h3 data-aos="fade-up">Managing add-ons</h3>
+      <p data-aos="fade-up">
+        Open the GUI with <code>agent-code manage</code>, then use the <strong>Add-ons</strong> tab.
+        Disabling prevents the code from being imported on the next load — it does <em>not</em> reverse changes an already-loaded add-on made outside the API.
+      </p>
+
+      <div class="callout warn" data-aos="fade-up">
+        <strong>Trust and safety.</strong> Add-ons execute as your user account.
+        Only install add-ons you trust. Do not run untrusted bundles from unknown sources.
+      </div>
+
+      <div style="margin-top:32px;text-align:center;" data-aos="fade-up">
+        <button class="btn btn-primary" onclick="go('guide')">Full developer API →</button>
+        <a class="btn btn-secondary" href="https://github.com/Agent-code-dev/Agent-code/blob/main/ADDON-DEVELOPMENT.md" target="_blank" rel="noopener">ADDON-DEVELOPMENT.md ↗</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- HELP -->
+<div class="page" id="page-help">
+  <section style="padding-top:56px;">
+    <div class="container">
+      <h2 data-aos="fade-right">Help</h2>
+      <p class="sub" data-aos="fade-right" data-aos-delay="80">Everything you can type, click, and configure.</p>
+
+      <h3 data-aos="fade-up">CLI commands</h3>
+      <table class="cmd-table" data-aos="fade-up" data-aos-delay="80">
+        <thead><tr><th style="width:260px;">Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code class="cmd">agent-code</code></td><td>Run the agent GUI</td></tr>
+          <tr><td><code class="cmd">agent-code run</code></td><td>Same as <code>agent-code</code></td></tr>
+          <tr><td><code class="cmd">agent-code manage</code></td><td>Open the Skill Store GUI (skills + add-ons)</td></tr>
+          <tr><td><code class="cmd">agent-code skills list</code></td><td>Show bundled skill names</td></tr>
+          <tr><td><code class="cmd">agent-code skills install</code></td><td>Copy bundled skills into <code>./skills/</code></td></tr>
+          <tr><td><code class="cmd">agent-code --version</code></td><td>Print version</td></tr>
+          <tr><td><code class="cmd">agent-code --help</code></td><td>Show all subcommands</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-aos="fade-up">Chat commands</h3>
+      <table class="cmd-table" data-aos="fade-up" data-aos-delay="80">
+        <thead><tr><th style="width:260px;">Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code class="cmd">/reset</code></td><td>Clear conversation memory</td></tr>
+          <tr><td><code class="cmd">/skills</code></td><td>List loaded + disabled skills</td></tr>
+          <tr><td><code class="cmd">/todo</code></td><td>Show the current task list</td></tr>
+          <tr><td><code class="cmd">/save</code></td><td>Save chat locally + cloud</td></tr>
+          <tr><td><code class="cmd">/permission</code></td><td>Show permission mode</td></tr>
+          <tr><td><code class="cmd">/open &lt;file&gt;</code></td><td>Open a workspace file</td></tr>
+          <tr><td><code class="cmd">/email</code></td><td>Configure email sending</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-aos="fade-up">File locations</h3>
+      <table class="cmd-table" data-aos="fade-up" data-aos-delay="80">
+        <thead><tr><th style="width:320px;">Path</th><th>What lives there</th></tr></thead>
+        <tbody>
+          <tr><td><code>./skills/&lt;name&gt;/</code></td><td>Skills you've installed or written</td></tr>
+          <tr><td><code>./workspace/</code></td><td>Sandboxed filesystem the agent reads/writes</td></tr>
+          <tr><td><code>&lt;user-data&gt;/addons/&lt;id&gt;/</code></td><td>Trusted add-ons (see <a href="#" onclick="go('addons');return false;">Add-ons</a>)</td></tr>
+          <tr><td><code>agent_config.json</code></td><td>API keys and settings</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-aos="fade-up">Environment variables</h3>
+      <table class="cmd-table" data-aos="fade-up" data-aos-delay="80">
+        <thead><tr><th style="width:320px;">Variable</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>AGENT_WORKSPACE</code></td><td>Absolute path to the workspace directory used by skills and tools</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-aos="fade-up">Troubleshooting</h3>
+      <details data-aos="fade-up"><summary>agent-code: command not found</summary><div class="body"><pre><code>export PATH="$HOME/.local/bin:$PATH"</code></pre><p>Or use <code>python3 -m agent_code</code>.</p></div></details>
+      <details data-aos="fade-up"><summary>browser: FAILED</summary><div class="body"><p>Windows: install <a href="https://developer.microsoft.com/microsoft-edge/webview2/" target="_blank" rel="noopener">WebView2 Runtime</a>.</p><p>Linux: <code>sudo apt install chromium</code></p></div></details>
+      <details data-aos="fade-up"><summary>_tkinter.TclError on Linux</summary><div class="body"><pre><code>sudo apt install python3-tk</code></pre></div></details>
+      <details data-aos="fade-up"><summary>no display name and no $DISPLAY</summary><div class="body"><p>Headless machine — use CLI commands, or set up X11 forwarding.</p></div></details>
+      <details data-aos="fade-up"><summary>LLM ERROR: 401</summary><div class="body"><p>Wrong key, or stray quotes in <code>agent_config.json</code>.</p></div></details>
+      <details data-aos="fade-up"><summary>LLM ERROR: 404</summary><div class="body"><p>Model name doesn't match the provider.</p></div></details>
+      <details data-aos="fade-up"><summary>BLOCKED: command not allowed</summary><div class="body"><p>Sandbox rejected the command.</p></div></details>
+      <details data-aos="fade-up"><summary>externally-managed-environment</summary><div class="body"><pre><code>pipx install agent-code</code></pre></div></details>
+      <details data-aos="fade-up"><summary>addon failed to load</summary><div class="body"><p>Check that <code>addon.py</code> defines a top-level <code>register(api)</code> function, and that <code>addon.json</code> is valid JSON with at least <code>name</code>, <code>version</code>, <code>description</code>, <code>author</code>.</p></div></details>
+      <details data-aos="fade-up"><summary>addon UI widget does not appear</summary><div class="body"><p>Confirm the <code>location=</code> you passed to <code>register_ui</code> is one of <code>sidebar</code>, <code>addons</code>, <code>settings</code>, <code>toolbar</code>, <code>workspace</code>. Builders must return a widget and should not block.</p></div></details>
+      <details data-aos="fade-up"><summary>add-on service replacement has no effect</summary><div class="body"><p>The core integration must call <code>AddonManager.resolve_service(name, default)</code> for that service — add-ons cannot monkey-patch globals. Check that the service name matches.</p></div></details>
+    </div>
+  </section>
+</div>
+
+<!-- GUIDE -->
+<div class="page" id="page-guide">
+  <div style="padding:56px 0;">
+    <div class="guide-wrap">
+      <aside class="guide-toc" data-aos="fade-right">
+        <h3>Contents</h3>
+        <a href="#g-overview">1. Overview</a>
+        <a href="#g-anatomy">2. Anatomy</a>
+        <a href="#g-contract">3. Contract</a>
+        <a href="#g-hello" style="padding-left:22px;color:var(--dim)">Hello World</a>
+        <a href="#g-commands" style="padding-left:22px;color:var(--dim)">Commands</a>
+        <a href="#g-metadata" style="padding-left:22px;color:var(--dim)">Metadata</a>
+        <a href="#g-sandbox">4. Sandbox</a>
+        <a href="#g-publishing">5. Publishing</a>
+        <a href="#g-addons">6. Add-on development</a>
+        <a href="#g-addons-entry" style="padding-left:22px;color:var(--dim)">Entry point</a>
+        <a href="#g-addons-ui" style="padding-left:22px;color:var(--dim)">UI extension points</a>
+        <a href="#g-addons-services" style="padding-left:22px;color:var(--dim)">Service extensions</a>
+        <a href="#g-addons-events" style="padding-left:22px;color:var(--dim)">Lifecycle hooks</a>
+        <a href="#g-addons-trust" style="padding-left:22px;color:var(--dim)">Trust model</a>
+      </aside>
+      <main class="guide-main">
+        <h2 id="g-overview" data-aos="fade-up">1. Overview</h2>
+        <p>A skill is a self-contained folder that adds tools and/or chat commands to the agent.</p>
+        <div class="callout ok"><strong>Why skills?</strong> You never edit the agent source. Drop a folder in <code>skills/</code>, restart.</div>
+
+        <h2 id="g-anatomy" data-aos="fade-up">2. Skill anatomy</h2>
+        <pre><code>your-project/
+└── skills/
+    └── my_skill/
+        ├── skill.py       ← code: metadata + tools + commands
+        └── skill.md       ← docs: frontmatter + human notes</code></pre>
+
+        <h2 id="g-contract" data-aos="fade-up">3. The contract</h2>
+        <h3 id="g-hello">Hello World</h3>
+        <pre><code>SKILL = {
+    "name": "greet",
+    "description": "Say hello.",
+}
+
+def hello(name: str = "world") -&gt; str:
+    return f"Hello, {name}!"
+
+TOOL_SCHEMAS = [{
+    "type": "function",
+    "function": {
+        "name": "hello",
+        "description": "Return a greeting.",
+        "parameters": {
+            "type": "object",
+            "properties": {"name": {"type": "string"}},
+        },
+    },
+}]
+
+TOOL_CALLABLES = {"hello": hello}</code></pre>
+
+        <h3 id="g-commands">Chat commands</h3>
+        <pre><code>def _handle_ping(args: list, log) -&gt; None:
+    log(f"pong {' '.join(args)}", "dim")
+
+COMMANDS = {
+    "ping": {"handler": _handle_ping, "description": "Reply pong"},
+}</code></pre>
+
+        <h3 id="g-metadata">Metadata — skill.md</h3>
+        <pre><code>---
+name: my_skill
+description: One-sentence summary.
+version: 1.0.0
+author: yourname
+---</code></pre>
+
+        <h2 id="g-sandbox" data-aos="fade-up">4. Sandbox</h2>
+        <pre><code>import os
+from pathlib import Path
+WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
+
+        <h2 id="g-publishing" data-aos="fade-up">5. Publishing</h2>
+        <ol style="color:var(--dim);"><li>Sign in via <code>agent-code manage</code></li><li>Click <strong>Publish</strong></li><li>Others can install</li></ol>
+
+        <h2 id="g-addons" data-aos="fade-up">6. Add-on development</h2>
+        <p>Add-ons extend the agent beyond tools and chat commands — they can add UI widgets, replace named services, and subscribe to lifecycle events. Use them when a skill isn't enough. For the top-level overview and comparison table, see the <a href="#" onclick="go('addons');return false;">Add-ons</a> page.</p>
+        <div class="callout warn"><strong>Trust model:</strong> add-ons run with your OS permissions and are <em>not</em> sandboxed. Only ship code you'd run yourself.</div>
+
+        <h3 id="g-addons-entry">Entry point — <code>addon.py</code></h3>
+        <p>Every add-on lives in <code>&lt;user-data&gt;/addons/&lt;id&gt;/</code> and provides <code>addon.py</code> and <code>addon.json</code>. <code>addon.py</code> must define a top-level <code>register(api)</code> function; the host calls it exactly once on load.</p>
+        <pre><code>{
+  "name": "my-extension",
+  "version": "1.0.0",
+  "description": "Adds a custom workspace and alternate Skill Store client",
+  "author": "Developer"
+}</code></pre>
+        <pre><code>def register(api):
+    api.register_ui("my-workspace", build_sidebar_button,
+                    location="sidebar", label="My workspace")
+    api.register_service("skill_store", AlternateSkillStore(),
+                         replaces=True, priority=50)
+    api.on("tools_loaded", lambda **ctx: None)</code></pre>
+
+        <h3 id="g-addons-ui">UI extension points</h3>
+        <p><code>register_ui(name, builder, location=..., label=..., description=...)</code> supports <code>sidebar</code>, <code>addons</code>, <code>settings</code>, <code>toolbar</code>, and <code>workspace</code>. The builder receives <code>(parent, app)</code> and must return a Tk / CustomTkinter widget. The host places the returned widget. Keep builders fast — do not block the UI thread.</p>
+        <pre><code>def build_sidebar_button(parent, app):
+    import customtkinter as ctk
+    return ctk.CTkButton(parent, text="My workspace",
+                         command=lambda: app.log_line("Workspace opened", "dim"))</code></pre>
+
+        <h3 id="g-addons-services">Service extensions</h3>
+        <p><code>register_service(name, implementation, replaces=False, priority=0, description="")</code> registers a named service implementation. <code>AddonManager.resolve_service(name, default, app=...)</code> returns the highest-priority registered implementation, or the supplied default. Factories can set <code>addon_service_factory = True</code> and accept <code>app</code>.</p>
+        <div class="callout">Service names are explicit extension points, not arbitrary monkey-patching of core globals. Core integrations must call <code>resolve_service</code> before an add-on can replace a service. Existing services remain the default when no add-on replacement is registered.</div>
+
+        <h3 id="g-addons-events">Lifecycle hooks</h3>
+        <p><code>api.on("tools_loaded", callback)</code> — subscribe to events. Callbacks receive keyword context, and the return value is ignored.</p>
+
+        <h3 id="g-addons-trust">Trust model</h3>
+        <p>Disabling an add-on prevents its code from being imported on the next load; it does not reverse changes an already-loaded add-on made outside the API. A future signed add-on repository should support signatures, hashes, compatibility metadata, permission declarations, and review before installation.</p>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGELOG -->
+<div class="page" id="page-changelog">
+  <section style="padding-top:56px;">
+    <div class="container">
+      <h2 data-aos="fade-right">Changelog</h2>
+      <p class="sub" data-aos="fade-right" data-aos-delay="80">
+        Loaded live from
+        <a href="https://github.com/Agent-code-dev/Agent-code/blob/main/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG.md</a>
+        · <span style="color:var(--green)"><span class="version-target"></span></span>
+        · <span class="date-target"></span>
+      </p>
+
+      <div class="changelog-md" id="changelog-content" data-aos="fade-up">
+        <p style="color:var(--dim);">Loading changelog from GitHub...</p>
+      </div>
+
+      <div style="margin-top:32px;text-align:center;" data-aos="fade-up">
+        <a class="btn btn-secondary" href="https://github.com/Agent-code-dev/Agent-code/releases" target="_blank" rel="noopener">All releases on GitHub →</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    <div>© 2026 · MIT + GPL-3.0 · <span style="color:var(--green)"><span class="version-target"></span></span></div>
+    <div class="links">
+      <a href="https://pypi.org/project/agent-code/" target="_blank" rel="noopener">PyPI</a>
+      <a href="https://github.com/Agent-code-dev/Agent-code" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/Agent-code-dev/Agent-code/releases" target="_blank" rel="noopener">Releases</a>
+      <a href="#" onclick="go('skills');return false;">Skills</a>
+      <a href="#" onclick="go('addons');return false;">Add-ons</a>
+    </div>
+  </div>
+</footer>
+
+<button id="toTop" aria-label="Back to top" title="Back to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"></polyline>
+  </svg>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+  // --- 1. Handle URL Parameters (PHP Replacement) ---
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  if (urlParams.has('download')) {
+      const target = (urlParams.get('download') === 'tar' || urlParams.get('download') === 'tar.gz') 
+        ? 'https://github.com/Agent-code-dev/Agent-code/archive/refs/heads/main.tar.gz'
+        : 'https://github.com/Agent-code-dev/Agent-code/archive/refs/heads/main.zip';
+      window.location.href = target;
+  } else if (urlParams.has('version')) {
+      document.body.innerHTML = `<pre style="padding:20px; color:#fff;">${JSON.stringify({
+          version: "2.0.0",
+          pypi_url: "https://pypi.org/project/agent-code/"
+      }, null, 2)}</pre>`;
+  }
+
+  // --- 2. Data Fetching Logic ---
+  const REPO = 'Agent-code-dev/Agent-code';
+  const PYPI_NAME = 'agent-code';
+  
+  async function loadData() {
+      let version = '2.0.0';
+      let date = new Date().toISOString().split('T')[0];
+      let releaseUrl = `https://github.com/${REPO}/releases`;
+      
+      try {
+          // Fetch PyPI Version
+          const pypiRes = await fetch(`https://pypi.org/pypi/${PYPI_NAME}/json`);
+          if (pypiRes.ok) {
+              const pypiData = await pypiRes.json();
+              version = pypiData.info.version;
+          }
+          
+          // Fetch GitHub Release Date
+          const ghRes = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`);
+          if (ghRes.ok) {
+              const ghData = await ghRes.json();
+              date = ghData.published_at.split('T')[0];
+              releaseUrl = ghData.html_url;
+          }
+      } catch (e) {
+          console.warn("Could not fetch live data, using defaults.", e);
+      }
+
+      // Update DOM
+      document.querySelectorAll('.version-target').forEach(el => el.textContent = 'v' + version);
+      document.querySelectorAll('.date-target').forEach(el => el.textContent = date);
+      document.getElementById('version-text').textContent = 'v' + version;
+      document.getElementById('date-text').textContent = date;
+      document.getElementById('release-link').href = releaseUrl;
+      document.title = `Agent + Skill Store — v${version} — pip install agent-code`;
+
+      // Update Banner Logic
+      const SEEN = localStorage.getItem('agent_code_seen_version');
+      if (SEEN && SEEN !== version) {
+          const b = document.getElementById('updateBanner');
+          document.getElementById('updateVersion').textContent = 'v' + version;
+          b.classList.add('show');
+      }
+      localStorage.setItem('agent_code_seen_version', version);
+  }
+
+  async function loadChangelog() {
+      try {
+          const res = await fetch(`https://raw.githubusercontent.com/${REPO}/main/CHANGELOG.md`);
+          if (res.ok) {
+              const md = await res.text();
+              document.getElementById('changelog-content').innerHTML = marked.parse(md);
+          } else {
+              throw new Error("Failed to load");
+          }
+      } catch (e) {
+          document.getElementById('changelog-content').innerHTML = "<p>Could not load changelog from GitHub.</p>";
+      }
+  }
+
+  // --- 3. UI Logic (Tabs, Copy, AOS) ---
+  const pages = document.querySelectorAll('.page');
+  const navBtns = document.querySelectorAll('nav button[data-page]');
+
+  function go(name) {
+    pages.forEach(p => p.classList.toggle('active', p.id === 'page-' + name));
+    navBtns.forEach(b => b.classList.toggle('active', b.dataset.page === name));
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    history.replaceState(null, '', location.pathname + (name === 'home' ? '' : '#' + name));
+    if (window.AOS) requestAnimationFrame(() => AOS.refreshHard());
+  }
+
+  navBtns.forEach(b => b.addEventListener('click', () => go(b.dataset.page)));
+
+  const initialHash = location.hash.replace('#', '');
+  if (initialHash && document.getElementById('page-' + initialHash)) go(initialHash);
+
+  document.querySelectorAll('.guide-toc a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = a.getAttribute('href').slice(1);
+      const t = document.getElementById(id);
+      if (t) {
+        t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, '', location.pathname + '#guide');
+      }
+    });
+  });
+
+  function copyPip(btn) {
+    const text = 'pip install agent-code';
+    const done = () => {
+      const prev = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = prev, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => {});
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+      done();
+    }
+  }
+
+  const toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', () => {
+    toTop.classList.toggle('show', window.scrollY > 400);
+  }, { passive: true });
+  toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // Initialize
+  loadData();
+  loadChangelog();
+  AOS.init({
+    duration: 700,
+    easing: 'ease-out-cubic',
+    once: true,
+    offset: 80,
+    disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  });
+</script>
+
 </body>
 </html>
