@@ -10,6 +10,12 @@
 <link rel="canonical" href="https://agent-code-dev.github.io/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='10' fill='%2358a6ff'/%3E%3C/svg%3E">
 
+<!-- ✅ Preconnect to critical origins (fixes network dependency tree) -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://pypi.org">
+<link rel="preconnect" href="https://api.github.com">
+<link rel="preconnect" href="https://raw.githubusercontent.com">
+
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://agent-code-dev.github.io/">
 <meta property="og:title" content="Agent + Skill Store">
@@ -32,9 +38,20 @@
 }
 </script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
-<!-- Markdown Parser for Changelog -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- ✅ Critical AOS opacity rules inlined to prevent FOUC while async CSS loads -->
+<style>
+@media (prefers-reduced-motion: no-preference) {
+  [data-aos] { opacity: 0; }
+  [data-aos].aos-animate { opacity: 1; }
+}
+</style>
+
+<!-- ✅ AOS CSS loaded non-render-blocking -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"></noscript>
+
+<!-- ✅ Markdown parser deferred (only needed for changelog) -->
+<script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
   :root {
@@ -61,12 +78,33 @@
     border-bottom:1px solid var(--border); }
   nav .container { display:flex; align-items:center; padding-top:14px; padding-bottom:14px; }
   .logo { font-weight:700; font-size:16px; color:#fff; display:flex; align-items:center; gap:8px; cursor:pointer; }
+
+  /* ✅ FIX: pulse animation no longer animates box-shadow (non-composited).
+     Baseline glow is static; extra glow is a pseudo-element with animated opacity. */
   .logo .dot { width:10px; height:10px; border-radius:50%; background:var(--accent);
+    position:relative;
+    box-shadow:0 0 10px var(--accent);
     animation:pulse 2.6s ease-in-out infinite; }
-  @keyframes pulse {
-    0%,100% { box-shadow:0 0 10px var(--accent); transform:scale(1); }
-    50%     { box-shadow:0 0 22px var(--accent), 0 0 36px var(--accent); transform:scale(1.15); }
+  .logo .dot::after {
+    content:'';
+    position:absolute; inset:-4px; border-radius:50%;
+    box-shadow:0 0 22px var(--accent), 0 0 36px var(--accent);
+    opacity:0;
+    animation:glowPulse 2.6s ease-in-out infinite;
+    pointer-events:none;
   }
+  @keyframes pulse {
+    0%,100% { transform:scale(1); }
+    50%     { transform:scale(1.15); }
+  }
+  @keyframes glowPulse {
+    0%,100% { opacity:0; }
+    50%     { opacity:1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .logo .dot, .logo .dot::after { animation:none; }
+  }
+
   nav ul { list-style:none; margin:0 0 0 auto; padding:0; display:flex;
     gap:4px; align-items:center; flex-wrap:wrap; }
   nav ul button { background:none; border:none; color:var(--dim);
@@ -93,14 +131,27 @@
     background:radial-gradient(ellipse 800px 400px at 50% 0%, rgba(88,166,255,.12), transparent 70%);
     pointer-events:none; animation:heroGlow 8s ease-in-out infinite; }
   @keyframes heroGlow { 0%,100% { opacity:.85; } 50% { opacity:1; } }
+
+  /* ✅ FIX: h1 uses a transform-only CSS animation (no opacity change).
+     It is also no longer wrapped in AOS, so it paints immediately — LCP win. */
   .hero h1 { font-size:48px; line-height:1.1; margin:0 0 16px; color:#fff;
-    letter-spacing:-.02em; position:relative; }
+    letter-spacing:-.02em; position:relative;
+    animation:heroSlide .6s ease-out both; }
+  @keyframes heroSlide {
+    from { transform:translateY(12px); }
+    to   { transform:translate(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero h1 { animation:none; }
+  }
+
+  /* ✅ FIX: static gradient — removed non-composited background-position animation */
   .hero h1 .grad {
     background:linear-gradient(135deg,#58a6ff 0%,#bc8cff 100%);
     -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    background-clip:text; background-size:200% 200%;
-    animation:gradShift 6s ease-in-out infinite; }
-  @keyframes gradShift { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+    background-clip:text;
+  }
+
   .hero p.tag { font-size:17px; color:var(--dim); max-width:660px;
     margin:0 auto 24px; position:relative; }
 
@@ -275,7 +326,6 @@
   .guide-main p { margin:10px 0; }
   .guide-main pre { margin:14px 0; }
 
-  /* Changelog markdown */
   .changelog-md { background:var(--panel); border:1px solid var(--border);
     border-radius:10px; padding:28px 32px; font-size:14.5px; line-height:1.7; }
   .changelog-md h1 { font-size:26px; margin:0 0 20px; padding-bottom:14px;
@@ -336,6 +386,9 @@
   </div>
 </nav>
 
+<!-- ✅ FIX: added <main> landmark for accessibility -->
+<main>
+
 <!-- HOME -->
 <div class="page active" id="page-home">
   <header class="hero">
@@ -349,7 +402,8 @@
         <a href="https://github.com/Agent-code-dev/Agent-code/releases" id="release-link" target="_blank" rel="noopener">what's new →</a>
       </div>
 
-      <h1 data-aos="fade-up" data-aos-duration="700">
+      <!-- ✅ FIX: removed data-aos from LCP element (h1) to eliminate render delay -->
+      <h1>
         Your own <span class="grad">AI agent</span>, on your machine.
       </h1>
       <p class="tag" data-aos="fade-up" data-aos-delay="100">
@@ -841,6 +895,8 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
   </section>
 </div>
 
+</main><!-- ✅ end <main> -->
+
 <footer>
   <div class="container">
     <div>© 2026 · MIT + GPL-3.0 · <span style="color:var(--green)"><span class="version-target"></span></span></div>
@@ -861,14 +917,15 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
   </svg>
 </button>
 
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<!-- ✅ FIX: AOS JS deferred -->
+<script defer src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
 <script>
   // --- 1. Handle URL Parameters (PHP Replacement) ---
   const urlParams = new URLSearchParams(window.location.search);
-  
+
   if (urlParams.has('download')) {
-      const target = (urlParams.get('download') === 'tar' || urlParams.get('download') === 'tar.gz') 
+      const target = (urlParams.get('download') === 'tar' || urlParams.get('download') === 'tar.gz')
         ? 'https://github.com/Agent-code-dev/Agent-code/archive/refs/heads/main.tar.gz'
         : 'https://github.com/Agent-code-dev/Agent-code/archive/refs/heads/main.zip';
       window.location.href = target;
@@ -882,21 +939,19 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
   // --- 2. Data Fetching Logic ---
   const REPO = 'Agent-code-dev/Agent-code';
   const PYPI_NAME = 'agent-code';
-  
+
   async function loadData() {
       let version = '2.0.0';
       let date = new Date().toISOString().split('T')[0];
       let releaseUrl = `https://github.com/${REPO}/releases`;
-      
+
       try {
-          // Fetch PyPI Version
           const pypiRes = await fetch(`https://pypi.org/pypi/${PYPI_NAME}/json`);
           if (pypiRes.ok) {
               const pypiData = await pypiRes.json();
               version = pypiData.info.version;
           }
-          
-          // Fetch GitHub Release Date
+
           const ghRes = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`);
           if (ghRes.ok) {
               const ghData = await ghRes.json();
@@ -907,7 +962,6 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
           console.warn("Could not fetch live data, using defaults.", e);
       }
 
-      // Update DOM
       document.querySelectorAll('.version-target').forEach(el => el.textContent = 'v' + version);
       document.querySelectorAll('.date-target').forEach(el => el.textContent = date);
       document.getElementById('version-text').textContent = 'v' + version;
@@ -915,7 +969,6 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
       document.getElementById('release-link').href = releaseUrl;
       document.title = `Agent + Skill Store — v${version} — pip install agent-code`;
 
-      // Update Banner Logic
       const SEEN = localStorage.getItem('agent_code_seen_version');
       if (SEEN && SEEN !== version) {
           const b = document.getElementById('updateBanner');
@@ -928,11 +981,15 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
   async function loadChangelog() {
       try {
           const res = await fetch(`https://raw.githubusercontent.com/${REPO}/main/CHANGELOG.md`);
-          if (res.ok) {
-              const md = await res.text();
-              document.getElementById('changelog-content').innerHTML = marked.parse(md);
+          if (!res.ok) throw new Error("Failed to load");
+          const md = await res.text();
+          const el = document.getElementById('changelog-content');
+          // ✅ FIX: safe fallback if marked hasn't loaded yet (deferred)
+          if (window.marked && typeof marked.parse === 'function') {
+              el.innerHTML = marked.parse(md);
           } else {
-              throw new Error("Failed to load");
+              const esc = md.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+              el.innerHTML = '<pre style="white-space:pre-wrap;">' + esc + '</pre>';
           }
       } catch (e) {
           document.getElementById('changelog-content').innerHTML = "<p>Could not load changelog from GitHub.</p>";
@@ -997,12 +1054,18 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
   // Initialize
   loadData();
   loadChangelog();
-  AOS.init({
-    duration: 700,
-    easing: 'ease-out-cubic',
-    once: true,
-    offset: 80,
-    disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // ✅ FIX: AOS is deferred, so wait for DOMContentLoaded before init
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.AOS) {
+      AOS.init({
+        duration: 700,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 80,
+        disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      });
+    }
   });
 </script>
 
