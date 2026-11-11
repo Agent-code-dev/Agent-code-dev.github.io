@@ -10,11 +10,9 @@
 <link rel="canonical" href="https://agent-code-dev.github.io/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='10' fill='%2358a6ff'/%3E%3C/svg%3E">
 
-<!-- ✅ Preconnect to critical origins (fixes network dependency tree) -->
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="preconnect" href="https://pypi.org">
-<link rel="preconnect" href="https://api.github.com">
-<link rel="preconnect" href="https://raw.githubusercontent.com">
+<!-- Preconnect only to the origins used for live updates -->
+<link rel="preconnect" href="https://pypi.org" crossorigin>
+<link rel="preconnect" href="https://api.github.com" crossorigin>
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://agent-code-dev.github.io/">
@@ -38,22 +36,10 @@
 }
 </script>
 
-<!-- ✅ Critical AOS opacity rules inlined to prevent FOUC while async CSS loads -->
 <style>
-@media (prefers-reduced-motion: no-preference) {
-  [data-aos] { opacity: 0; }
-  [data-aos].aos-animate { opacity: 1; }
-}
-</style>
-
-<!-- ✅ AOS CSS loaded non-render-blocking -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"></noscript>
-
-<!-- ✅ Markdown parser deferred (only needed for changelog) -->
-<script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-<style>
+  /* ============================================================
+     Reset + tokens
+     ============================================================ */
   :root {
     --bg:#0e1117; --panel:#161b22; --card:#1c2128; --hover:#21262d;
     --border:#30363d; --fg:#c9d1d9; --dim:#8b949e;
@@ -73,34 +59,61 @@
   pre code { background:transparent; padding:0; }
   .container { max-width:1080px; margin:0 auto; padding:0 24px; }
 
+  /* ============================================================
+     Scroll-reveal (Replaces AOS) — Uses CSS transform/opacity
+     ============================================================ */
+  [data-aos] {
+    opacity: 0;
+    transition: opacity 700ms cubic-bezier(0.215, 0.61, 0.355, 1),
+                transform 700ms cubic-bezier(0.215, 0.61, 0.355, 1);
+    will-change: opacity, transform;
+  }
+  [data-aos="fade-up"]    { transform: translate3d(0, 24px, 0); }
+  [data-aos="fade-down"]  { transform: translate3d(0, -24px, 0); }
+  [data-aos="fade-left"]  { transform: translate3d(-24px, 0, 0); }
+  [data-aos="fade-right"] { transform: translate3d(24px, 0, 0); }
+  [data-aos="zoom-in"]    { transform: scale(0.92); }
+  [data-aos].aos-animate {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    will-change: auto;
+  }
+  [data-aos][data-aos-delay="80"]  { transition-delay: 80ms; }
+  [data-aos][data-aos-delay="100"] { transition-delay: 100ms; }
+  [data-aos][data-aos-delay="160"] { transition-delay: 160ms; }
+  [data-aos][data-aos-delay="200"] { transition-delay: 200ms; }
+  [data-aos][data-aos-delay="240"] { transition-delay: 240ms; }
+  [data-aos][data-aos-delay="300"] { transition-delay: 300ms; }
+  [data-aos][data-aos-delay="320"] { transition-delay: 320ms; }
+  [data-aos][data-aos-delay="400"] { transition-delay: 400ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-aos] { opacity: 1; transform: none; transition: none; }
+    *, *::before, *::after { animation-duration: 0.01ms !important;
+                              animation-iteration-count: 1 !important;
+                              transition-duration: 0.01ms !important;
+                              scroll-behavior: auto !important; }
+  }
+
+  /* ============================================================
+     Nav
+     ============================================================ */
   nav { position:sticky; top:0; z-index:100;
     background:rgba(14,17,23,.92); backdrop-filter:blur(12px);
     border-bottom:1px solid var(--border); }
   nav .container { display:flex; align-items:center; padding-top:14px; padding-bottom:14px; }
   .logo { font-weight:700; font-size:16px; color:#fff; display:flex; align-items:center; gap:8px; cursor:pointer; }
 
-  /* ✅ FIX: pulse animation no longer animates box-shadow (non-composited).
-     Baseline glow is static; extra glow is a pseudo-element with animated opacity. */
+  /* Composited pulse: transform scale + opacity glow via ::after */
   .logo .dot { width:10px; height:10px; border-radius:50%; background:var(--accent);
-    position:relative;
-    box-shadow:0 0 10px var(--accent);
+    position:relative; box-shadow:0 0 10px var(--accent);
     animation:pulse 2.6s ease-in-out infinite; }
   .logo .dot::after {
-    content:'';
-    position:absolute; inset:-4px; border-radius:50%;
+    content:''; position:absolute; inset:-4px; border-radius:50%;
     box-shadow:0 0 22px var(--accent), 0 0 36px var(--accent);
-    opacity:0;
-    animation:glowPulse 2.6s ease-in-out infinite;
-    pointer-events:none;
-  }
-  @keyframes pulse {
-    0%,100% { transform:scale(1); }
-    50%     { transform:scale(1.15); }
-  }
-  @keyframes glowPulse {
-    0%,100% { opacity:0; }
-    50%     { opacity:1; }
-  }
+    opacity:0; animation:glowPulse 2.6s ease-in-out infinite; pointer-events:none; }
+  @keyframes pulse     { 0%,100% { transform:scale(1);   } 50% { transform:scale(1.15); } }
+  @keyframes glowPulse { 0%,100% { opacity:0;            } 50% { opacity:1;             } }
   @media (prefers-reduced-motion: reduce) {
     .logo .dot, .logo .dot::after { animation:none; }
   }
@@ -119,21 +132,25 @@
   @media (max-width:960px) { nav ul button, nav ul a { padding:8px 8px; font-size:13px; } }
   @media (max-width:720px) { nav ul button, nav ul a { padding:6px 5px; font-size:12px; } }
 
+  /* ============================================================
+     Pages
+     ============================================================ */
   .page { display:none; }
   .page.active { display:block; animation:pageFade .35s ease; }
   @keyframes pageFade {
     from { opacity:0; transform:translateY(8px); }
-    to   { opacity:1; transform:translateY(0); }
+    to   { opacity:1; transform:translate(0); }
   }
 
+  /* ============================================================
+     Hero — LCP element uses transform-only animation
+     ============================================================ */
   .hero { padding:80px 0 48px; text-align:center; position:relative; overflow:hidden; }
   .hero::before { content:''; position:absolute; inset:0;
     background:radial-gradient(ellipse 800px 400px at 50% 0%, rgba(88,166,255,.12), transparent 70%);
     pointer-events:none; animation:heroGlow 8s ease-in-out infinite; }
   @keyframes heroGlow { 0%,100% { opacity:.85; } 50% { opacity:1; } }
 
-  /* ✅ FIX: h1 uses a transform-only CSS animation (no opacity change).
-     It is also no longer wrapped in AOS, so it paints immediately — LCP win. */
   .hero h1 { font-size:48px; line-height:1.1; margin:0 0 16px; color:#fff;
     letter-spacing:-.02em; position:relative;
     animation:heroSlide .6s ease-out both; }
@@ -144,14 +161,11 @@
   @media (prefers-reduced-motion: reduce) {
     .hero h1 { animation:none; }
   }
-
-  /* ✅ FIX: static gradient — removed non-composited background-position animation */
   .hero h1 .grad {
     background:linear-gradient(135deg,#58a6ff 0%,#bc8cff 100%);
     -webkit-background-clip:text; -webkit-text-fill-color:transparent;
     background-clip:text;
   }
-
   .hero p.tag { font-size:17px; color:var(--dim); max-width:660px;
     margin:0 auto 24px; position:relative; }
 
@@ -217,6 +231,9 @@
   .btn-green:hover { background:#56d364; text-decoration:none;
     transform:translateY(-2px); box-shadow:0 8px 24px rgba(63,185,80,.4); }
 
+  /* ============================================================
+     Sections
+     ============================================================ */
   section { padding:56px 0; }
   section h2 { font-size:28px; margin:0 0 8px; color:#fff; letter-spacing:-.01em; }
   section h3 { font-size:16px; margin:32px 0 12px; color:var(--accent); }
@@ -364,13 +381,21 @@
   footer .container { display:flex; flex-wrap:wrap; gap:16px; align-items:center; }
   footer .links { display:flex; gap:16px; margin-left:auto; flex-wrap:wrap; }
 </style>
+
+<!-- Noscript fallback: show all scroll-reveal content if JS is off -->
+<noscript>
+  <style>
+    [data-aos] { opacity: 1 !important; transform: none !important; }
+    #toTop { display: none !important; }
+  </style>
+</noscript>
 </head>
 <body>
 
 <nav>
   <div class="container">
     <div class="logo" onclick="go('home')">
-      <span class="dot"></span> Agent + Skill Store
+      <span class="dot" aria-hidden="true"></span> Agent + Skill Store
     </div>
     <ul>
       <li><button data-page="home" class="active">Home</button></li>
@@ -386,7 +411,6 @@
   </div>
 </nav>
 
-<!-- ✅ FIX: added <main> landmark for accessibility -->
 <main>
 
 <!-- HOME -->
@@ -394,7 +418,7 @@
   <header class="hero">
     <div class="container">
       <div class="version-pill" data-aos="zoom-in" title="Live from PyPI + GitHub">
-        <span class="live-dot"></span>
+        <span class="live-dot" aria-hidden="true"></span>
         <strong id="version-text">v2.0.0</strong>
         <span style="opacity:.5">·</span>
         <span id="date-text">Recently</span>
@@ -402,7 +426,7 @@
         <a href="https://github.com/Agent-code-dev/Agent-code/releases" id="release-link" target="_blank" rel="noopener">what's new →</a>
       </div>
 
-      <!-- ✅ FIX: removed data-aos from LCP element (h1) to eliminate render delay -->
+      <!-- LCP element — no data-aos, paints immediately -->
       <h1>
         Your own <span class="grad">AI agent</span>, on your machine.
       </h1>
@@ -772,7 +796,7 @@ def register(api):
         <a href="#g-addons-events" style="padding-left:22px;color:var(--dim)">Lifecycle hooks</a>
         <a href="#g-addons-trust" style="padding-left:22px;color:var(--dim)">Trust model</a>
       </aside>
-      <main class="guide-main">
+      <div class="guide-main">
         <h2 id="g-overview" data-aos="fade-up">1. Overview</h2>
         <p>A skill is a self-contained folder that adds tools and/or chat commands to the agent.</p>
         <div class="callout ok"><strong>Why skills?</strong> You never edit the agent source. Drop a folder in <code>skills/</code>, restart.</div>
@@ -867,7 +891,7 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
 
         <h3 id="g-addons-trust">Trust model</h3>
         <p>Disabling an add-on prevents its code from being imported on the next load; it does not reverse changes an already-loaded add-on made outside the API. A future signed add-on repository should support signatures, hashes, compatibility metadata, permission declarations, and review before installation.</p>
-      </main>
+      </div>
     </div>
   </div>
 </div>
@@ -884,8 +908,8 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
         · <span class="date-target"></span>
       </p>
 
-      <div class="changelog-md" id="changelog-content" data-aos="fade-up">
-        <p style="color:var(--dim);">Loading changelog from GitHub...</p>
+      <div class="changelog-md" id="changelog-content">
+        <p style="color:var(--dim);">Open this tab to load the changelog.</p>
       </div>
 
       <div style="margin-top:32px;text-align:center;" data-aos="fade-up">
@@ -895,7 +919,7 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
   </section>
 </div>
 
-</main><!-- ✅ end <main> -->
+</main>
 
 <footer>
   <div class="container">
@@ -912,91 +936,135 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
 
 <button id="toTop" aria-label="Back to top" title="Back to top">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-       stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+       stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <polyline points="18 15 12 9 6 15"></polyline>
   </svg>
 </button>
 
-<!-- ✅ FIX: AOS JS deferred -->
-<script defer src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-
 <script>
-  // --- 1. Handle URL Parameters (PHP Replacement) ---
-  const urlParams = new URLSearchParams(window.location.search);
+(function () {
+  'use strict';
 
+  // ============================================================
+  // URL parameters (download and version JSON)
+  // ============================================================
+  const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('download')) {
-      const target = (urlParams.get('download') === 'tar' || urlParams.get('download') === 'tar.gz')
-        ? 'https://github.com/Agent-code-dev/Agent-code/archive/refs/heads/main.tar.gz'
-        : 'https://github.com/Agent-code-dev/Agent-code/archive/refs/heads/main.zip';
-      window.location.href = target;
-  } else if (urlParams.has('version')) {
-      document.body.innerHTML = `<pre style="padding:20px; color:#fff;">${JSON.stringify({
-          version: "2.0.0",
-          pypi_url: "https://pypi.org/project/agent-code/"
-      }, null, 2)}</pre>`;
+    const target = (urlParams.get('download') === 'tar' || urlParams.get('download') === 'tar.gz')
+      ? 'https://github.com/Agent-code-dev/Agent-code/archive/refs/heads/main.tar.gz'
+      : 'https://github.com/Agent-code-dev/Agent-code/archive/refs/heads/main.zip';
+    window.location.href = target;
+    return;
+  }
+  if (urlParams.has('version')) {
+    document.body.innerHTML = '<pre style="padding:20px; color:#fff;">' +
+      JSON.stringify({ version: "2.0.0", pypi_url: "https://pypi.org/project/agent-code/" }, null, 2) +
+      '</pre>';
+    return;
   }
 
-  // --- 2. Data Fetching Logic ---
+  // ============================================================
+  // Live Data Fetching (PyPI + GitHub) — Non-Blocking
+  // ============================================================
   const REPO = 'Agent-code-dev/Agent-code';
   const PYPI_NAME = 'agent-code';
 
   async function loadData() {
-      let version = '2.0.0';
-      let date = new Date().toISOString().split('T')[0];
-      let releaseUrl = `https://github.com/${REPO}/releases`;
+    let version = '2.0.0';
+    let date = new Date().toISOString().split('T')[0];
+    let releaseUrl = `https://github.com/${REPO}/releases`;
 
-      try {
-          const pypiRes = await fetch(`https://pypi.org/pypi/${PYPI_NAME}/json`);
-          if (pypiRes.ok) {
-              const pypiData = await pypiRes.json();
-              version = pypiData.info.version;
-          }
-
-          const ghRes = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`);
-          if (ghRes.ok) {
-              const ghData = await ghRes.json();
-              date = ghData.published_at.split('T')[0];
-              releaseUrl = ghData.html_url;
-          }
-      } catch (e) {
-          console.warn("Could not fetch live data, using defaults.", e);
+    try {
+      const [pypiRes, ghRes] = await Promise.allSettled([
+        fetch(`https://pypi.org/pypi/${PYPI_NAME}/json`),
+        fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
+      ]);
+      
+      if (pypiRes.status === 'fulfilled' && pypiRes.value.ok) {
+        const d = await pypiRes.value.json();
+        version = d.info.version;
       }
-
-      document.querySelectorAll('.version-target').forEach(el => el.textContent = 'v' + version);
-      document.querySelectorAll('.date-target').forEach(el => el.textContent = date);
-      document.getElementById('version-text').textContent = 'v' + version;
-      document.getElementById('date-text').textContent = date;
-      document.getElementById('release-link').href = releaseUrl;
-      document.title = `Agent + Skill Store — v${version} — pip install agent-code`;
-
-      const SEEN = localStorage.getItem('agent_code_seen_version');
-      if (SEEN && SEEN !== version) {
-          const b = document.getElementById('updateBanner');
-          document.getElementById('updateVersion').textContent = 'v' + version;
-          b.classList.add('show');
+      
+      if (ghRes.status === 'fulfilled' && ghRes.value.ok) {
+        const d = await ghRes.value.json();
+        date = d.published_at.split('T')[0];
+        releaseUrl = d.html_url;
       }
-      localStorage.setItem('agent_code_seen_version', version);
+    } catch (e) {
+      console.warn('Live data fetch failed, using defaults.', e);
+    }
+
+    // Update DOM with live data
+    document.querySelectorAll('.version-target').forEach(el => el.textContent = 'v' + version);
+    document.querySelectorAll('.date-target').forEach(el => el.textContent = date);
+    
+    const vt = document.getElementById('version-text');
+    const dt = document.getElementById('date-text');
+    const rl = document.getElementById('release-link');
+    
+    if (vt) vt.textContent = 'v' + version;
+    if (dt) dt.textContent = date;
+    if (rl) rl.href = releaseUrl;
+    document.title = `Agent + Skill Store — v${version} — pip install agent-code`;
+
+    // Update banner logic
+    const SEEN = localStorage.getItem('agent_code_seen_version');
+    if (SEEN && SEEN !== version) {
+      const b = document.getElementById('updateBanner');
+      const uv = document.getElementById('updateVersion');
+      if (b && uv) { uv.textContent = 'v' + version; b.classList.add('show'); }
+    }
+    localStorage.setItem('agent_code_seen_version', version);
+  }
+
+  // ============================================================
+  // Changelog: Lazy load marked.js and fetch only when tab is opened
+  // ============================================================
+  let changelogLoaded = false;
+  let markedPromise = null;
+
+  function loadMarked() {
+    if (window.marked) return Promise.resolve();
+    if (markedPromise) return markedPromise;
+    markedPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+      s.defer = true;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('Failed to load marked.js'));
+      document.head.appendChild(s);
+    });
+    return markedPromise;
   }
 
   async function loadChangelog() {
-      try {
-          const res = await fetch(`https://raw.githubusercontent.com/${REPO}/main/CHANGELOG.md`);
-          if (!res.ok) throw new Error("Failed to load");
-          const md = await res.text();
-          const el = document.getElementById('changelog-content');
-          // ✅ FIX: safe fallback if marked hasn't loaded yet (deferred)
-          if (window.marked && typeof marked.parse === 'function') {
-              el.innerHTML = marked.parse(md);
-          } else {
-              const esc = md.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-              el.innerHTML = '<pre style="white-space:pre-wrap;">' + esc + '</pre>';
-          }
-      } catch (e) {
-          document.getElementById('changelog-content').innerHTML = "<p>Could not load changelog from GitHub.</p>";
+    if (changelogLoaded) return;
+    changelogLoaded = true;
+    const el = document.getElementById('changelog-content');
+    if (!el) return;
+    el.innerHTML = '<p style="color:var(--dim);">Loading changelog from GitHub…</p>';
+    
+    try {
+      const [_, res] = await Promise.all([
+        loadMarked(),
+        fetch(`https://raw.githubusercontent.com/${REPO}/main/CHANGELOG.md`)
+      ]);
+      if (!res.ok) throw new Error('Fetch failed');
+      const md = await res.text();
+      
+      if (window.marked && typeof marked.parse === 'function') {
+        el.innerHTML = marked.parse(md);
+      } else {
+        el.textContent = md;
       }
+    } catch (e) {
+      el.innerHTML = '<p>Could not load changelog from GitHub.</p>';
+    }
   }
 
-  // --- 3. UI Logic (Tabs, Copy, AOS) ---
+  // ============================================================
+  // Tab navigation
+  // ============================================================
   const pages = document.querySelectorAll('.page');
   const navBtns = document.querySelectorAll('nav button[data-page]');
 
@@ -1005,16 +1073,28 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
     navBtns.forEach(b => b.classList.toggle('active', b.dataset.page === name));
     window.scrollTo({ top: 0, behavior: 'instant' });
     history.replaceState(null, '', location.pathname + (name === 'home' ? '' : '#' + name));
-    if (window.AOS) requestAnimationFrame(() => AOS.refreshHard());
+
+    // If clicking changelog, trigger the lazy load
+    if (name === 'changelog') loadChangelog();
+
+    // Reveal any [data-aos] in the newly shown page
+    requestAnimationFrame(() => {
+      document.querySelectorAll('#page-' + name + ' [data-aos]:not(.aos-animate)')
+        .forEach(el => el.classList.add('aos-animate'));
+    });
   }
+  window.go = go;
 
   navBtns.forEach(b => b.addEventListener('click', () => go(b.dataset.page)));
 
   const initialHash = location.hash.replace('#', '');
   if (initialHash && document.getElementById('page-' + initialHash)) go(initialHash);
 
+  // ============================================================
+  // Guide TOC smooth scroll
+  // ============================================================
   document.querySelectorAll('.guide-toc a').forEach(a => {
-    a.addEventListener('click', (e) => {
+    a.addEventListener('click', e => {
       e.preventDefault();
       const id = a.getAttribute('href').slice(1);
       const t = document.getElementById(id);
@@ -1025,12 +1105,15 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
     });
   });
 
-  function copyPip(btn) {
+  // ============================================================
+  // Copy pip command
+  // ============================================================
+  window.copyPip = function (btn) {
     const text = 'pip install agent-code';
     const done = () => {
       const prev = btn.textContent;
       btn.textContent = 'Copied';
-      setTimeout(() => btn.textContent = prev, 1200);
+      setTimeout(() => (btn.textContent = prev), 1200);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done).catch(() => {});
@@ -1039,34 +1122,58 @@ WORKSPACE = Path(os.environ["AGENT_WORKSPACE"]).resolve()</code></pre>
       ta.value = text;
       document.body.appendChild(ta);
       ta.select();
-      try { document.execCommand('copy'); } catch(e) {}
+      try { document.execCommand('copy'); } catch (e) {}
       document.body.removeChild(ta);
       done();
     }
-  }
+  };
 
+  // ============================================================
+  // Back to top
+  // ============================================================
   const toTop = document.getElementById('toTop');
   window.addEventListener('scroll', () => {
     toTop.classList.toggle('show', window.scrollY > 400);
   }, { passive: true });
   toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-  // Initialize
-  loadData();
-  loadChangelog();
+  // ============================================================
+  // Scroll reveal (Replaces AOS entirely)
+  // ============================================================
+  function initReveal() {
+    const els = document.querySelectorAll('[data-aos]');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ✅ FIX: AOS is deferred, so wait for DOMContentLoaded before init
-  document.addEventListener('DOMContentLoaded', () => {
-    if (window.AOS) {
-      AOS.init({
-        duration: 700,
-        easing: 'ease-out-cubic',
-        once: true,
-        offset: 80,
-        disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      });
+    if (reduce || !('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add('aos-animate'));
+      return;
     }
-  });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('aos-animate');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+    els.forEach(el => observer.observe(el));
+  }
+
+  // ============================================================
+  // Kick everything off
+  // ============================================================
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initReveal();
+      loadData();
+    });
+  } else {
+    initReveal();
+    loadData();
+  }
+})();
 </script>
 
 </body>
